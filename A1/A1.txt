@@ -1,0 +1,17 @@
+1. 
+a) cat a.txt 
+	gibt den inhalt von a.txt in der Konsole (oder standard ausgabe) aus
+b) cat - < a.txt
+c) cat a.txt > b.txt 
+	der inhalt von b.txt wird von a.txt überschrieben
+d) cat a.txt >> b.txt
+	der inhalt von a.txt wird an den inhalt von b.txt angehängt
+
+2.
+	VerwaisterProzess => Prozess dessen Elternprozess terminiert. Dieser Prozess wurde 			     	     von Init adopiert und wird dort weitergeführt
+	ZombieProzess => bereits beendeter Prozesses der noch darauf wartet das sein  
+3. 
+	1. gen = 1 Prozess
+	2. Gen = 2 Prozesse
+	3. Gen = 4 Prozesse
+	n. Gen = 2^n Prozesse

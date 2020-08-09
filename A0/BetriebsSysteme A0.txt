@@ -1,0 +1,12 @@
+1.1. gibt dem aktuellen Ordner verlauf an.
+1.2. man steht für manual und gibt die Dokumentation der befehle aus 
+	man 1 printf -> kommande für linux cmd
+	man 3 printf -> c befehl
+1.3. grep todo -r -H -n
+	-r = rekursiv; -H = mit Dateiname; -n = mit Line Number
+1.4. gcc Wall -o exec.out datei.c
+1.5. mv From.txt To.txt
+	dateien genrell durch die gegend bewegen
+
+
+2 globale in data, locale in stack	

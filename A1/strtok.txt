@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+	
+	char s[] = "-l";
+	
+	char *token = strtok(s," ");
+	char *hans[10] ;
+	for(int j = 0 ; j<11 ; j = j +1) {
+		hans[j] = NULL;
+	}
+	
+	int i = 0;
+	
+	while(token != NULL) {
+		hans[i] = token;
+		printf("%s\n",hans[i]);
+		token = strtok(NULL , " ");
+		i= i+1;
+	}
+	execlp("ls","ls", hans[0],hans[1],NULL);
+	return 0;
+}

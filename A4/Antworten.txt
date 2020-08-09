@@ -1,0 +1,49 @@
+4.1
+Externer Verschnitt:
+
+Speicherbereiche zwischen Prozessen die oftmals so klein sind 
+das kein weiterer Prozess dort PLatz findet.
+
+Dadurch kann es dazu komen das ein Prozess auf Speicher 
+warten muss, obwohl noch insgesamt genug Speicher frei ist.
+
+Interner Verschnitt:
+
+Prozesse werden in Block größen eingespeichert und dadurch 
+beim einspeichern auf dienächst größere Blockgröße aufgerundet.
+
+Durch dieses vorgehen kann es dazu kommen das 49%des Speichers 
+nicht eigentlich unbenutzt ist allerdings nicht anderweitig genutzt werden kann.
+
+Alokation von Speicher:
+
+Da beim vorreservieren von Speicher die Größe des Prozesses geschätztwerden muss 
+und der Speicherbedarf liebre zu groß als zu klein geschätzt werden sollte, kommt
+es oftmals dazu das Prozessen mehr Speicher zugewiesen wird alsdas sie wirklich brauchen
+
+4.2
+a)
+
+Das Betriebssystem muss nur die Seitentabelle ändern damit 
+Prozesse die Seite weiterhin an ihrer neuen Adresse finden.
+
+b)
+
+Würde der TLB nach einem Kontextwechsel nicht geleert werden, würde er weiterhin die 
+alten physikalischen Addressen in Verbindung zu den virtuellen Adressen enthalten.
+Und somit Prozesse an dden falschen Orten im Speicher suchen lassen.
+
+4.3
+
++----------------+--------------------------------+
+|Start           |AAABBB CCCCCC     DDDDDEEEEE    |
+|A: Freigeben    |   BBB CCCCCC     DDDDDEEEEE    |
+|F: Belegt 4 MiB |   BBB CCCCCCFFFF DDDDDEEEEE    |
+|A: Belegt 2 MiB |AA BBB CCCCCCFFFF DDDDDEEEEE    |
+|B: Freigeben    |AA     CCCCCCFFFF DDDDDEEEEE    |
+|E: Freigeben    |AA     CCCCCCFFFF DDDDD         |
+|E: Belegt 7 MiB |AA     CCCCCCFFFF DDDDDEEEEEEE  |
+|E: Freigeben    |AA     CCCCCCFFFF DDDDD         |
+|E: Belegt 4 MiB |AAEEEE CCCCCCFFFF DDDDD         |
++----------------+--------------------------------+
+

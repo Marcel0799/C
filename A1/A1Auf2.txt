@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <string.h>
+
+int main(void) {
+	int wish = 0;
+	printf("Menü \n 1. ps \n 2. date \n 3. ls \n 4. exit \n Menüpunkte eingeben> ");
+	
+	if(scanf("%1d",&wish)<1) {
+		return 1;
+	}
+	
+	char parameterEingabe[100];
+	char *parameter[10];
+	for(int i = 0 ; i<11 ; i = i + 1) 
+		parameter[i] = NULL;
+	
+	printf(" Paramter: ");
+	
+	if(scanf("%s",parameterEingabe)<1) {
+		return 1;
+	}
+	
+	char *token = strtok(parameterEingabe," ");
+	parameter[0] = token;
+	
+	int j = 1;
+	while(token != NULL){
+		token = strtok(NULL, " ");
+		parameter[j] = token;
+		j = j+1;
+	}
+	
+	pid_t next;
+	next = fork();
+	
+	if(next==0){
+		switch(wish) {
+			case 1 : execlp("ps","ps", parameter[0],parameter[1],parameter[2],parameter[3],parameter[4],parameter[5],parameter[6],parameter[7],parameter[8],parameter[9],NULL);break;
+		
+			case 2 : execlp("date","date", parameter[0],parameter[1],parameter[2],parameter[3],parameter[4],parameter[5],parameter[6],parameter[7],parameter[8],parameter[9],NULL);break;
+
+			case 3 : execlp("ls","ls", parameter[0],parameter[1],parameter[2],parameter[3],parameter[4],parameter[5],parameter[6],parameter[7],parameter[8],parameter[9],NULL);break;
+
+			case 4 :printf("auf Wiedersehen\n");break;
+			 
+			default: printf("gegebener Wert nicht im Menü enthalten\n"); break;
+		}
+	}	else {
+		int status;
+		wait(&status);
+		if(wish != 4) {
+			execlp("/home/studi/Schreibtisch/CProgramme/A1/A1Auf2","/home/studi/Schreibtisch/CProgramme/A1/A1Auf2", NULL);	
+		}
+	}
+	
+	return 0;
+}

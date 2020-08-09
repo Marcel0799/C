@@ -1,0 +1,52 @@
+#include "4a.h"
+// Hier ggf. weitere Includes
+
+/*
+ * Hier könnt ihr ggf. benötigte globale Varibalen und/oder Hilfsfunktionen ablegen
+ */
+
+void *ff_alloc(size_t size)
+{
+	
+	size_t chunk_index;
+
+	chunk_index = 0;
+	int changed = 0;
+
+	if(size <= 0) 
+	{
+		return NULL;
+	}
+
+	size = size_to_chunks(size);
+
+	while(chunk_index < 64) 
+	{
+		if(allocation_list[chunk_index].length != 0 && 
+			allocation_list[chunk_index].status == CHUNK_FREE) {
+			
+			if(allocation_list[chunk_index].length >= size) {
+				size_t old_size = allocation_list[chunk_index].length ;
+				allocation_list[chunk_index].length = size; 
+				allocation_list[chunk_index].status = CHUNK_ALLOCATED;
+
+				allocation_list[chunk_index + size].length = old_size - size; 
+				allocation_list[chunk_index + size].status = CHUNK_FREE;
+				changed = 1;
+				goto hans;			
+			}
+		}
+		chunk_index = chunk_index +1;
+	}
+	
+	if(changed == 0) 
+	{
+		return NULL;
+	}
+	hans:;
+	 
+	/*
+	 * Gibt die Startadresse des belegten Speicher zurück. 
+	 */
+	return heap + chunk_index * CHUNK_SIZE;
+}

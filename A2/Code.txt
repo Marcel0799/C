@@ -1,0 +1,183 @@
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/syscall.h>
+#include <semaphore.h>
+#include <pthread.h>
+#include <signal.h>
+#include <time.h>
+
+/* Hier müsst Ihr ggf. Euren Code einfügen. */
+
+sem_t belegt;
+sem_t frei;
+
+/* Thread-Deskriptoren */
+pthread_t pthreadPrimserv;
+pthread_t pthreadPrimeat;
+
+/* Geteilter Speicher zum Ablegen der Primzahl */
+
+
+unsigned int primzahl;
+
+#ifdef RINGBUFFER
+#define buffersize 100
+#else
+#define buffersize 1
+#endif
+unsigned int ringbuffer[buffersize];
+
+
+/* naive Implementierung eines Primzahltests */
+static int ist_primzahl(unsigned x) {
+	int i;
+	if (x < 2) return 0;
+	for (i = 2; i * i <= x; ++i) {
+		if ((x % i) == 0) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+/* Primzahl-Fabrik */
+static void* primserv(void *arg) {
+	unsigned int i;
+	struct timespec sleepTime;
+	
+	unsigned int j = 0;
+
+	sleepTime.tv_sec = 0;
+	sleepTime.tv_nsec = 500000000;
+
+	/* endlos Primzahlen produzieren ... */
+	for (i = 1; ; ++i) {
+		if (!ist_primzahl(i))
+			continue;
+
+		/* Hier müsst Ihr ggf. Euren Code einfügen. */
+		
+		sem_wait(&frei);
+
+		printf("\033[01;31;40mprimserv(%ld): Primzahl %u produziert!\033[0m\n", syscall(SYS_gettid), i);
+		
+		ringbuffer[j%buffersize]=i;
+		j = j+1;
+		
+
+		/* Hier müsst Ihr ggf. Euren Code einfügen. */
+
+		sem_post(&belegt);
+
+		/* ein bisschen schlafenlegen ... Primzahlen Erzeugen macht muede! */
+		nanosleep(&sleepTime, NULL);
+	}
+
+	return NULL;
+}
+
+static void* primeat(void *arg) {
+	struct timespec sleepTime;
+
+	unsigned int j;
+	sleepTime.tv_sec = 1;
+	sleepTime.tv_nsec = 500000000;
+	
+	j = 0;
+
+	/* endlos Primzahlen konsumieren ... */
+	while (1) {
+
+		/* Hier müsst Ihr ggf. Euren Code einfügen. */
+
+		sem_wait(&belegt);
+
+		printf("\033[01;33;40mprimeat (%ld): Primzahl %u konsumiert!\033[0m\n", syscall(SYS_gettid), ringbuffer[j%buffersize]);
+		j = j+1;
+		
+		
+		/* Hier müsst Ihr ggf. Euren Code einfügen. */
+
+		sem_post(&frei);
+
+		/* ein bisschen schlafenlegen ... Primzahlen Konsumieren macht muede! */
+		nanosleep(&sleepTime, NULL);
+	}
+
+	return NULL;
+}
+
+static void signalHandler(int signal) {
+	if (signal == SIGINT) {
+		pthread_cancel(pthreadPrimserv);
+		printf("primeserv beendet\n");
+		pthread_cancel(pthreadPrimeat);
+		printf("primeat beendet\n");
+	} else {
+		fprintf(stderr, "Anderes Signal als SIGINT gefangen: %d\n", signal);
+		exit(EXIT_FAILURE);
+	}
+}
+
+int main(int argc, const char *argv[]) {
+	int ret;
+	struct sigaction sa;
+
+	/*
+	 * Registriere Signal-Handler für das Signal SIGINT.
+	 * So kann alles sauber aufgeräumt werden,
+	 * wenn das Programm mit Strg+C abgebrochen wird.
+	 */
+	sa.sa_handler = signalHandler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	if (sigaction(SIGINT, &sa, NULL) == -1) {
+		perror("sigaction");
+		return EXIT_FAILURE;
+	}
+
+	/* Hier müsst Ihr ggf. Euren Code einfügen. */
+	
+	sem_init(&belegt, 0, buffersize );
+	sem_init(&frei , 0 , 1);
+
+	/* Erzeuge primeserv-Thread */
+	ret = pthread_create(&pthreadPrimserv, NULL, &primserv, NULL);
+	if (ret) {
+		fprintf(stderr, "Cannot create producer thread: %s\n", strerror(ret));
+		return EXIT_FAILURE;
+	}
+	/* Erzeuge primeat-Thread */
+	ret = pthread_create(&pthreadPrimeat, NULL, &primeat, NULL);
+	if (ret) {
+		fprintf(stderr, "Cannot create eater thread: %s\n", strerror(ret));
+		return EXIT_FAILURE;
+	}
+	
+
+	/* Warte auf Terminierung des primserv-Threads */
+	ret = pthread_join(pthreadPrimserv, NULL);
+	if (ret) {
+		fprintf(stderr, "Cannot wait for producer thread: %s\n", strerror(ret));
+		return EXIT_FAILURE;
+	}
+	/* Warte auf Terminierung des primeat-Threads */
+	ret = pthread_join(pthreadPrimeat, NULL);
+	if (ret) {
+		fprintf(stderr, "Cannot wait for eater thread: %s\n", strerror(ret));
+		return EXIT_FAILURE;
+	}
+
+	/* Hier müsst Ihr ggf. Euren Code einfügen. */
+	
+	sem_destroy(&belegt);
+	sem_destroy(&frei);
+
+	printf("Alles ist aufgeräumt. Ende!\n");
+
+	return EXIT_SUCCESS;
+}

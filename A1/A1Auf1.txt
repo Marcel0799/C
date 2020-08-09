@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+int main(void) {
+	int wish = 0;
+	printf("Menü \n 1. ps \n 2. date \n 3. ls \n 4. exit \n Menüpunkte eingeben> ");
+	
+	if(scanf("%1d",&wish)<1) {
+		return 1;
+	}
+	
+	pid_t next;
+	next = fork();
+	
+	if(next==0){
+		switch(wish) {
+			case 1 : execlp("ps","ps", NULL);break;
+		
+			case 2 : execlp("date","date", NULL);break;
+			
+			case 3 : execlp("ls","ls", NULL);break;
+			
+			case 4 :printf("auf Wiedersehen\n");break;
+			 
+			default: printf("gegebener Wert nicht im Menü enthalten\n"); break;
+		}
+	}	else {
+		printf("PID des Kindes %d \n",next);
+
+		int status;
+		wait(&status);
+		if(wish != 4) {
+			execlp("/home/studi/Schreibtisch/CProgramme/A1/A1Auf1","/home/studi/Schreibtisch/CProgramme/A1/A1Auf1", NULL);	
+		}
+	}
+	
+	return 0;
+}

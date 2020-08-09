@@ -1,0 +1,19 @@
+1.1
++---+------------------------------+
+| A |CCCEE---CCCEE---CCCEECCCEE---C|
+| B |---CCEEE---CCEEE---CCEEE---CCE|
+| C |-----CCC-----CCCEEEEEE--CCC---|
++---+------------------------------+
+
+1.2
+
+
+
+2.1
+Da Primeserv deutlich schneller prodziert als Primeeat 		komsumiert und Primeeat immer nur die zu letzt produzierte 		Primzahl konsumiert wird nur jede dritte Primzahl 		konsumiert.
+
+2.3
+Da der Produzent bei der einseitigen Synchronisation nicht 		bescheid kriegt ob das letzte Element schon konsumiert wurde. Da das Produzieren von Primzahlen nicht immer gleich lang dauert kann es dadurch zu eine desynchronisation kommen.
+
+2.4
+FiFo abarbeiten eines Arrays

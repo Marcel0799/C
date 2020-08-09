@@ -1,0 +1,40 @@
+Aufgabe 3:
+a) 1. Die Betriebsmittel sind die Klausuren bzw. der Klausurenstapel
+      und die Notenliste. Beide sind wiederverwendbar.
+   2. "mutual exclusion": man braucht Klausuren und Liste, um arbeiten zu können
+      "hold and wait": man kann die Klausuren und die Liste nicht gleichzeitig belegen.
+      "no preemption": Die Mitarbeiter behalten das erste Betriebsmittel so lange,
+                       bis sie auch das andere Betriebsmittel haben und arbeiten können.
+      weitere Bedingung "circular wait": es gibt eine Reihe von Prozessen, die gegenseitig
+                       auf die von anderen blockierten Betriebsmittel warten. Dies muss nicht
+                       nur zwischen zwei Prozessen sein, sondern kann auch in einem
+                       Kreis sein.
+   3. Es kann nicht zu einem Livelock kommen, weil die belegten Betriebsmittel
+      nicht zurückgegeben werden können. Einmal belegt kann kein Schritt zurückgemacht
+      werden, weshalb es nicht zu ständigen wechselnden Zuständen der Prozesse kommen kann.
+
+b) Dauer bis Deadlock ca 45 sec.
+   Erst fangen beide Mitarbeiter mit anderen Arbeiten an.
+   B braucht 3s und A braucht 8s. B holt sich immer erst die Liste und dann die
+   Klausuren. A holt sich immer erst die Klausuren und dann die Liste. (Grundlage für circular wait)
+   Beide Mitarbeiter korrigieren gleich lange (5s) und auch das Belegen der Betriebsmittel
+   dauert für beide Mitarbeiter gleich lange (Klausuren 4s, Liste 3s).
+   Dauer der anderen Arbeiten: B(3,8,2) A(8,8)
+   Im Schnitt arbeitet Mitarbeiter B also kürzer an anderen Sachen als Mitarbeiter A.
+   Nach der dritten Arbeit von B sind beide Mitarbeiter im Bereich der Betriebsmittel-Belegung.
+   Während B noch korrigiert versucht A die Klausuren zu bekommen. Dann beendet B das Korrigieren
+   und arbeitet für 2s an etwas anderem. Dann holt B sich die Liste und A belegt in der Zeit
+   die Klausuren. Danach versucht A die Liste zu belegen und B versucht die Klausuren zu belegen.
+   Da Beides von dem jeweils anderen bereits belegt ist und keiner von beiden sein Betriebsmittel
+   zurückgegeben kann (hold and wait, no preemption), ist das nicht möglich.
+   mutex, hold and wait, no preemption, circular wait => DEADLOCK
+   Der Professor kann erkennen, ob ein Deadlock vorliegt, wenn beide Betriebsmittel belegt sind,
+   aber keiner der beiden Mitarbeiter arbeitet bzw. arbeiten kann.
+
+d) Verklemmungen lassen sich auf verschiedenen Wegen auflösen. Eine Möglichkeit ist das
+   schrittweise Abbrechen der beteiligten Prozesse.
+   Der Professor könnte im Fall eines Deadlocks einen der beiden Mitarbeiter kurzzeitig von seiner
+   Korrekturarbeit entbinden (einen der Mitarbeiter-Threads abbrechen).
+
+e) Man könnte im gegebenen Ablauf Deadlocks vermeiden, indem beide Mitarbeiter die Betriebsmittel
+   in der gleichen Reihenfolge belegen.
